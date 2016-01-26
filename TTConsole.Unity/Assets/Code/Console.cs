@@ -135,10 +135,6 @@ namespace TinyTeam.Debuger
         static int maxLinesForDisplay = 2000;
         static int maxLinesForAsyncRecord = 20000;
 
-        //int currentPage = 1; //current show page msg in console.
-        //int maxPage = 1;     //dynamic base on msg count.
-        //int perCountPage = 50; // every 50 per page.
-
         int beginMsgIndex = 0; // current show msg index begin
         int endMsgIndex = 0;   // current show msg index end
         int maxMsgCount = 1;   // current max msg count
@@ -169,18 +165,42 @@ namespace TinyTeam.Debuger
 
         //performance optimized
         static Queue<Message> _messages = new Queue<Message>();
+        static Dictionary<string, Queue<Message>> customQueueMessages = new Dictionary<string, Queue<Message>>();
+
+        static Queue<Message> FindCustomQueue(string customType)
+        {
+            if (string.IsNullOrEmpty(customType))
+            {
+                return _messages;
+            }
+
+            customType = customType.ToLower();
+            Queue<Message> tempQueue = null;
+            if (!customQueueMessages.TryGetValue(customType, out tempQueue))
+            {
+                tempQueue = new Queue<Message>();
+                customQueueMessages[customType] = tempQueue;
+            }
+            return tempQueue;
+        }
 
         static Message CreateNew(object messageObject, MessageType messageType, Color displayColor, string customType)
         {
-            if(_messages.Count > maxLinesForDisplay)
+            Queue<Message> tempQueue = FindCustomQueue(customType);
+
+            if(tempQueue.Count > maxLinesForDisplay)
             {
-                Message msg = _messages.Dequeue();
+                Message msg = tempQueue.Dequeue();
                 msg.Set(messageObject, messageType, displayColor, customType);
                 return msg;
             }
             else
             {
                 Message msg = new Message(messageObject, messageType, displayColor, customType);
+
+                // push into this queue.
+                tempQueue.Enqueue(msg);
+
                 return msg;
             }
         }
@@ -1065,12 +1085,6 @@ namespace TinyTeam.Debuger
 
         void LogMessage(Message msg)
         {
-            ///add into console windows log list.
-            lock (_messages)
-            {
-                _messages.Enqueue(msg);
-            }
-
 			if(IsOpen)
 			{
 				///caculate current page amount.
@@ -1095,6 +1109,7 @@ namespace TinyTeam.Debuger
         void ClearLog()
         {
             _messages.Clear();
+            customQueueMessages.Clear();
             isNeedRefreshContent = true;
         }
 
@@ -1322,9 +1337,10 @@ namespace TinyTeam.Debuger
             List<Message> curs = new List<Message>();
 
             Message[] msgs;
-            lock (_messages)
+            lock (_lock)
             {
-                msgs = _messages.ToArray();
+                //msgs = _messages.ToArray();
+                msgs = FindCustomQueue(currentShowMessageCustom).ToArray();
             }
             for (int i = 0; i < msgs.Length; i++)
             {
