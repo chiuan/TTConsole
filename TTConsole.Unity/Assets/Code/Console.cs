@@ -85,8 +85,9 @@ namespace TinyTeam.Debuger
                 Instance.endMsgIndex = Instance.maxMsgCount-1;
                 Instance.beginMsgIndex = Instance.FindBeginMsgIndexFromEnd();
                 Instance.isNeedRefreshContent = true;
+                Instance.needAutoToMax = true;
 
-                if(Instance.ui_root_obj == null && value == true)
+                if (Instance.ui_root_obj == null && value == true)
                 {
                     Instance.DrawWindow(true);
                 }
@@ -142,7 +143,7 @@ namespace TinyTeam.Debuger
         int endMsgIndex = 0;   // current show msg index end
         int maxMsgCount = 1;   // current max msg count
 
-		bool needAutoToMax = true; //when select target page less than maxPage wont follow the newest.
+		bool needAutoToMax = true; // when select target page less than maxPage wont follow the newest.
 
         /// <summary>
         /// whitch type of message should show
@@ -1075,7 +1076,7 @@ namespace TinyTeam.Debuger
 				///caculate current page amount.
 				maxMsgCount = CaculateCurrentMaxMsgCount();
 
-                if (needAutoToMax && endMsgIndex != maxMsgCount - 1)
+                if (needAutoToMax)
                 {
                     isNeedRefreshContent = true;
                     endMsgIndex = maxMsgCount - 1;
