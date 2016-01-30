@@ -2,6 +2,7 @@
 The Best Debuger &amp; Runtime Console For Unity3D
 
 ![image](https://github.com/chiuan/TTConsole/blob/master/UI.png)
+![image](https://github.com/chiuan/TTConsole/blob/master/runtime.png)
 
 ##一、Introduce   
 This is a simple UGUI style console。In Mobile and Editor can quickly and easily view runtime Log information, and support asynchronous locally stored, the Log file without changing the game running efficiency and did not produce the gc.    
