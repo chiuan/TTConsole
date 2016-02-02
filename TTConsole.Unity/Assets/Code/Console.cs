@@ -303,6 +303,11 @@ namespace TinyTeam.Debuger
                 return CreateNew(message, MessageType.INPUT, inputColor, string.Empty);
             }
 
+            public static Message Unity(object message)
+            {
+                return CreateNew(message, MessageType.UNITY, unityColor, string.Empty);
+            }
+
             public override string ToString()
             {
                 return ToGUIString();
@@ -455,7 +460,8 @@ namespace TinyTeam.Debuger
         ///listen the base unity log
         void HandleUnityLog(string condition, string stackTrace, LogType type)
         {
-            Log(condition + "\n" + "<i>"+ "<color=#"+ ColorToHex(Color.grey)+">" +stackTrace + "</color>" +"</i>", MessageType.UNITY);
+            LogMessage(Message.Unity(condition + "\n" + "<i>" + "<color=#" + ColorToHex(Color.grey) + ">" + stackTrace + "</color>" + "</i>"));
+            //Log(condition + "\n" + "<i>"+ "<color=#"+ ColorToHex(Color.grey)+">" +stackTrace + "</color>" +"</i>", MessageType.UNITY);
         }
 
         ///check KeyCode & Touch
