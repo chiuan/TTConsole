@@ -626,7 +626,8 @@ namespace TinyTeam.Debuger
                 {
                     GameObject eventsystem = new GameObject("EventSystem");
                     es = eventsystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
-                    eventsystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                    UnityEngine.EventSystems.StandaloneInputModule sim = eventsystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+                    sim.forceModuleActive = true;
                 }
             }
         }
