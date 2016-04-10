@@ -47,8 +47,8 @@ namespace TinyTeam.Debuger.Editor
         public void OnGUI()
         {
             GUI.skin.GetStyle("TextArea").richText = true;
-            EditorGUILayout.BeginVertical(GUILayout.Height(700));
-            scroll = EditorGUILayout.BeginScrollView(scroll,false,false);
+            EditorGUILayout.BeginVertical();
+            scroll = EditorGUILayout.BeginScrollView(scroll,false,true);
             EditorGUILayout.TextArea(currentContent, GUI.skin.GetStyle("TextArea"));
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
@@ -117,8 +117,6 @@ namespace TinyTeam.Debuger.Editor
                 }
             }
             EditorGUILayout.EndHorizontal();
-
-            // open new log
             {
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
@@ -261,7 +259,6 @@ namespace TinyTeam.Debuger.Editor
                 true
             );
             window.minSize = new Vector2(1024, 768);
-            window.maxSize = new Vector2(1024, 768);
             window.currentFilePath = filePath;
             window.Init();
             window.Show();

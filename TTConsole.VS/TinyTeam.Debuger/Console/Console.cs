@@ -793,6 +793,12 @@ namespace TinyTeam.Debuger
             
             for (int i = beginMsgIndex; i <= endMsgIndex; i++)
             {
+                // protected if more....
+                if(i >= msgs.Length)
+                {
+                    break;
+                }
+
                 val += msgs[i].ToGUIString();
             }
 

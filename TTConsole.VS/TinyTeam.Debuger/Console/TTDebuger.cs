@@ -60,12 +60,14 @@ namespace TinyTeam.Debuger
 
         public static void RegisterCommand(string commandString, Func<string[],object> commandCallback, string CMD_Discribes)
         {
-            Console.RegisterCommand(commandString, commandCallback, CMD_Discribes);
+            if(EnableLog)
+                Console.RegisterCommand(commandString, commandCallback, CMD_Discribes);
         }
 
         public static void UnRegisterCommand(string commandString)
         {
-            Console.UnRegisterCommand(commandString);
+            if(EnableLog)
+                Console.UnRegisterCommand(commandString);
         }
 
     }

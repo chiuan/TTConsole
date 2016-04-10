@@ -1,0 +1,1 @@
+..\TTConsole.Unity\Assets\Dlls\Editor
