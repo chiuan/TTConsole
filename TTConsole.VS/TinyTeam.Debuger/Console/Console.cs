@@ -192,6 +192,7 @@ namespace TinyTeam.Debuger
             {
                 Message msg = tempQueue.Dequeue();
                 msg.Set(messageObject, messageType, displayColor, customType);
+                tempQueue.Enqueue(msg);
                 return msg;
             }
             else
