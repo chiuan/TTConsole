@@ -259,6 +259,12 @@ namespace TinyTeam.Debuger
                         this.text = "[" + DateTime.Now.ToLongTimeString() + "] "+messageObject.ToString();
                 }
 
+                // add customtype to the beginning.
+                if (!string.IsNullOrEmpty(customType))
+                {
+                    this.text = "[" + customType + "]" + this.text;
+                }
+
                 this.formatted = string.Empty;
                 this.type = messageType;
                 this.customType = customType;
