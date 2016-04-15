@@ -110,6 +110,11 @@ namespace TinyTeam.Debuger
 
         private static bool m_isOpen = false;
 
+        /// <summary>
+        /// unity log binding
+        /// </summary>
+        public static bool isNeedBindUnityLog = true;
+
         //cached previous open time
         private float preOpenTime = 0f;
 
@@ -434,8 +439,12 @@ namespace TinyTeam.Debuger
             ///Init Others CMD.
             if (delegateInitCMD != null) delegateInitCMD(this);
 
-            //register unity log callback.
-            Application.logMessageReceived += HandleUnityLog;
+            // register unity log callback.
+            // fix unitylog message
+            if (isNeedBindUnityLog)
+            {
+                Application.logMessageReceived += HandleUnityLog;
+            }
 
             //Start Async Writing Log
             //only in editor auto start.
@@ -465,7 +474,7 @@ namespace TinyTeam.Debuger
         }
 
         ///listen the base unity log
-        void HandleUnityLog(string condition, string stackTrace, LogType type)
+        public void HandleUnityLog(string condition, string stackTrace, LogType type)
         {
             LogMessage(Message.Unity(condition + "\n" + "<i>" + "<color=#" + ColorToHex(Color.grey) + ">" + stackTrace + "</color>" + "</i>"));
             //Log(condition + "\n" + "<i>"+ "<color=#"+ ColorToHex(Color.grey)+">" +stackTrace + "</color>" +"</i>", MessageType.UNITY);
