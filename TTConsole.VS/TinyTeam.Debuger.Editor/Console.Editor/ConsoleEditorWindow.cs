@@ -23,32 +23,25 @@ namespace TinyTeam.Debuger.Editor
 
         int currentPage = 1;
         int maxPage = 1;
-
         int maxNum = 15000;
+
+        int contentIndexBegin = 0; 
+        int contentIndexEnd = 0;   
 
         void Init()
         {
             content = System.IO.File.ReadAllText(currentFilePath);
 
-            ///caculate current page amount.
-            maxPage = Mathf.FloorToInt(content.Length / maxNum);
-            if (content.Length - maxPage * maxNum > 0)
-            {
-                maxPage++;
-            }
-
             //refresh text
             currentContent = RefreshPage();
         }
-
-        #region Drawing Window
 
 
         public void OnGUI()
         {
             GUI.skin.GetStyle("TextArea").richText = true;
             EditorGUILayout.BeginVertical();
-            scroll = EditorGUILayout.BeginScrollView(scroll,false,true);
+            scroll = EditorGUILayout.BeginScrollView(scroll,false,true,GUILayout.MinHeight(740));
             EditorGUILayout.TextArea(currentContent, GUI.skin.GetStyle("TextArea"));
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
@@ -78,42 +71,30 @@ namespace TinyTeam.Debuger.Editor
                 Rect rect = GUILayoutUtility.GetRect(new GUIContent("<back"), EditorStyles.miniButton, GUILayout.Width(200), GUILayout.Height(25));
                 if (GUI.Button(rect, "<back", EditorStyles.miniButton))
                 {
-                    temp = currentPage;
-                    currentPage--;
-                    if (currentPage > maxPage)
+                    contentIndexEnd = contentIndexBegin;
+                    contentIndexBegin = FindBeginMsgIndexFromEnd();
+
+                    if(contentIndexBegin == 0)
                     {
-                        currentPage = maxPage;
-                    }
-                    else if (currentPage < 1)
-                    {
-                        currentPage = 1;
+                        contentIndexEnd = FindEndMsgIndexFromBegin();
                     }
 
-                    if (temp != currentPage)
-                    {
-                        //refresh text
-                        currentContent = RefreshPage();
-                    }
+                    //refresh text
+                    currentContent = RefreshPage();
                 }
                 rect = GUILayoutUtility.GetRect(new GUIContent("next>"), EditorStyles.miniButton, GUILayout.Width(200), GUILayout.Height(25));
                 if (GUI.Button(rect, "next>", EditorStyles.miniButton))
                 {
-                    temp = currentPage;
-                    currentPage++;
-                    if (currentPage > maxPage)
+                    contentIndexBegin = contentIndexEnd;
+                    contentIndexEnd = FindEndMsgIndexFromBegin();
+
+                    if (contentIndexBegin >= content.Length - 1)
                     {
-                        currentPage = maxPage;
-                    }
-                    else if (currentPage < 1)
-                    {
-                        currentPage = 1;
+                        contentIndexBegin = FindBeginMsgIndexFromEnd();
                     }
 
-                    if (temp != currentPage)
-                    {
-                        //refresh text
-                        currentContent = RefreshPage();
-                    }
+                    //refresh text
+                    currentContent = RefreshPage();
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -133,8 +114,11 @@ namespace TinyTeam.Debuger.Editor
         string RefreshPage()
         {
             //from
-            int from = FindColorLeftIndex((currentPage - 1) * maxNum);
-            int to = FindColorRightIndex((currentPage) * maxNum);
+            //int from = FindColorLeftIndex((currentPage - 1) * maxNum);
+            //int to = FindColorRightIndex((currentPage) * maxNum);
+
+            int from = contentIndexBegin;
+            int to = FindEndMsgIndexFromBegin();
 
             int length = 1;
             if(to <= content.Length )
@@ -192,14 +176,15 @@ namespace TinyTeam.Debuger.Editor
         /// </summary>
         int FindColorRightIndex(int endIndex)
         {
-            if(endIndex >= content.Length)
+            if(endIndex >= content.Length - 1)
             {
-                return content.Length;
+                return content.Length - 1;
             }
 
-            while (endIndex <= content.Length)
+            while (endIndex <= content.Length - 1)
             {
-                if (content[endIndex - 1] == '>' && endIndex - 8 >= 0)
+                endIndex++;
+                if (endIndex - 1 >= 0 && content[endIndex - 1] == '>' && endIndex - 8 >= 0)
                 {
                     if (content.Substring(endIndex - 8, 8) == "</color>")
                     {
@@ -219,12 +204,66 @@ namespace TinyTeam.Debuger.Editor
                         }
                     }
                 }
-                endIndex++;
             }
+
             return endIndex;
         }
 
-        #endregion
+        // found the begin index from end 
+        // need less than 65000 chars.
+        private int FindBeginMsgIndexFromEnd()
+        {
+            for (int i = contentIndexEnd; i > 0;)
+            {
+                int temp = i;
+
+                // get the previous item string..
+                i = FindColorLeftIndex(i);
+
+                if (i == temp) return i;
+
+                if (contentIndexEnd - i >= 10000)
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        private int FindEndMsgIndexFromBegin()
+        {
+            for (int i = contentIndexBegin; i < content.Length - 1;)
+            {
+                int temp = i;
+
+                i = FindColorRightIndex(i);
+
+                if (i == temp) return i;
+
+                if (i - contentIndexBegin >= 10000)
+                {
+                    return i;
+                }
+            }
+
+            return content.Length - 1;
+        }
+
+        int currentPersent
+        {
+            get
+            {
+                if (content.Length == 0)
+                {
+                    return 0;
+                }
+                else if (contentIndexEnd == content.Length - 1)
+                {
+                    return 100;
+                }
+                return (int)((contentIndexEnd * 1.0f / (content.Length - 1)) * 100);
+            }
+        }
 
         #region Editor Control
 
