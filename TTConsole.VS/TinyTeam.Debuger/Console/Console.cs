@@ -7,6 +7,8 @@ using System.Text;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
+using System.Linq;
+
 ///Console to show debug
 ///use cmd like : ? show all cmd
 ///By Chiuanwei 2015-3-3
@@ -447,9 +449,7 @@ namespace TinyTeam.Debuger
             }
 
             //Start Async Writing Log
-            //only in editor auto start.
-            //mobile should use log...
-            if (!applicationIsQuitting && Application.isMobilePlatform == false && Application.isEditor)
+            if (!applicationIsQuitting /*&& Application.isMobilePlatform == false && Application.isEditor*/)
             {
                 StartAsyncWriteLog();
             }
@@ -1446,14 +1446,18 @@ namespace TinyTeam.Debuger
         System.Object thisLock = new System.Object();
 
         /// <summary>
-        /// 日志文件写入流对象
-        /// </summary>
-        System.IO.StreamWriter streamWrite;
-
-        /// <summary>
         /// 日志线程
         /// </summary>
         System.Threading.Thread logThread;
+
+        string _currentAsyncLogFilePath = string.Empty;
+        public string currentAsyncLogFilePath
+        {
+            get
+            {
+                return _currentAsyncLogFilePath;
+            }
+        }
 
         int asyncWriteCounter = 0;
         bool isAsyncWritingLog = false;
@@ -1471,6 +1475,19 @@ namespace TinyTeam.Debuger
                 if (!Directory.Exists(logFolder))
                 {
                     System.IO.Directory.CreateDirectory(logFolder);
+                }
+                else
+                {
+                    // check if too many files
+                    string[] files = Directory.GetFiles(logFolder);
+                    if(files.Length > 50)
+                    {
+                        List<string> sortFiles = files.OrderBy(ss => new FileInfo(ss).CreationTime).ToList();
+                        for(int i=0; i < sortFiles.Count - 10; i++)
+                        {
+                            File.Delete(sortFiles[i]);
+                        }
+                    }
                 }
 
                 return logFolder;
@@ -1490,7 +1507,7 @@ namespace TinyTeam.Debuger
         /// <summary>
         /// Start A asyncWriteLog Server.
         /// </summary>
-        public void StartAsyncWriteLog()
+        internal void StartAsyncWriteLog()
         {
             //new file.
             CreateNewLogFile();
@@ -1498,20 +1515,14 @@ namespace TinyTeam.Debuger
             logThread = new System.Threading.Thread(RunningAsyncWritingLog);
             logThread.Priority = System.Threading.ThreadPriority.Lowest;
             logThread.Name = "LogThread";
+            logThread.IsBackground = true;
             logThread.Start(logThread);
 
             isAsyncWritingLog = true;
         }
 
-        public void StopAsyncWriteLog()
+        internal void StopAsyncWriteLog()
         {
-            if (streamWrite != null)
-            {
-                streamWrite.Flush();
-                streamWrite.Close();
-                streamWrite = null;
-            }
-
             if (logThread != null)
             {
                 logThread.Abort();
@@ -1524,16 +1535,12 @@ namespace TinyTeam.Debuger
         }
 
         ///save current log and new file.
-        public void CreateNewLogFile()
+        internal void CreateNewLogFile()
         {
             try
             {
-                if (streamWrite != null)
-                {
-                    streamWrite.Flush();
-                    streamWrite.Close();
-                }
-                streamWrite = new StreamWriter(logPath, true);
+                // generate a new log file.
+                _currentAsyncLogFilePath = logPath;
             }
             catch(Exception e)
             {
@@ -1585,12 +1592,16 @@ namespace TinyTeam.Debuger
             {
                 if (!string.IsNullOrEmpty(logBuff))
                 {
-                    streamWrite.Write(_logBuff);
-                    streamWrite.Flush();
+                    using (StreamWriter streamWrite = new StreamWriter(_currentAsyncLogFilePath, true))
+                    {
+                        streamWrite.Write(_logBuff);
+                        streamWrite.Flush();
+                    }
+
                     _logBuff = string.Empty;
                 }
 
-                System.Threading.Thread.Sleep(150);
+                System.Threading.Thread.Sleep(100);
             }
         }
 
