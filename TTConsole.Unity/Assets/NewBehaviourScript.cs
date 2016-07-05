@@ -12,7 +12,9 @@ public class NewBehaviourScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         TTDebuger.Log("Hello Chiuan");
-        TTDebuger.Log("Hello Chiuan","",new Color(1,0.3f,1));
+        TTDebuger.Log("socket...", "NET");
+        TTDebuger.Log("load xxxx.ab", "Loader");
+        TTDebuger.Log("success mission", "mission");
 
         //EventTrigger tr = go.AddComponent<EventTrigger>();
         //EventTrigger.Entry en = new EventTrigger.Entry();
@@ -23,7 +25,7 @@ public class NewBehaviourScript : MonoBehaviour {
         //tr.delegates.Add(en);
 
         //TTDebuger.RegisterCommand("load", LoadLevel, "");
-        //StartCoroutine(IEDebug());
+        StartCoroutine(IEDebug());
 
         //TTDebuger.Log("hello man");
     }
