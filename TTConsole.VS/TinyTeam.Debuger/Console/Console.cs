@@ -1,25 +1,27 @@
-﻿using UnityEngine;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
-
-using System.Linq;
-
-///Console to show debug
-///use cmd like : ? show all cmd
-///By Chiuanwei 2015-3-3
-
-namespace TinyTeam.Debuger
+﻿namespace TinyTeam.Debuger
 {
+    ///Console to show debug
+    ///use cmd like : ? show all cmd
+    ///By Chiuanwei 2015-3-3
+
+#if UNITY_ENGINE
+
+    using UnityEngine;
+    using System;
+    using System.IO;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Text;
+    using UnityEngine.EventSystems;
+    using UnityEngine.SceneManagement;
+
+    using System.Linq;
+
     public class Console : MonoBehaviour
     {
         private bool isInit = false;
 
-        #region -------------Singleton Setting------------------
+    #region -------------Singleton Setting------------------
 
         private static Console _instance;
         private static object _lock = new object();
@@ -72,7 +74,7 @@ namespace TinyTeam.Debuger
             StopAsyncWriteLog();
         }
 
-        #endregion
+    #endregion
 
         public static bool IsOpen
         {
@@ -168,7 +170,7 @@ namespace TinyTeam.Debuger
         Dictionary<string, Func<string[], object>> _cmdTable = new Dictionary<string, Func<string[], object>>();
         Dictionary<string, string> _cmdTableDiscribes = new Dictionary<string, string>(); 
 
-        #region Message Struct
+    #region Message Struct
 
         //performance optimized
         static Queue<Message> _messages = new Queue<Message>();
@@ -371,9 +373,9 @@ namespace TinyTeam.Debuger
             }
         }
 
-        #endregion
+    #endregion
 
-        #region History CMD struct
+    #region History CMD struct
 
         class History
         {
@@ -411,9 +413,9 @@ namespace TinyTeam.Debuger
 
         History _history = new History();
 
-        #endregion
+    #endregion
 
-        #region Mono & base
+    #region Mono & base
 
         // Use this for initialization
         void Init()
@@ -623,9 +625,9 @@ namespace TinyTeam.Debuger
             return new Color32(r, g, b, 255);
         }
 
-#endregion
+    #endregion
 
-        #region DrawWindows
+    #region DrawWindows
 
         ///Init the event system if not exist.
         private void InitEventSystem()
@@ -879,9 +881,9 @@ namespace TinyTeam.Debuger
             text_fps.text = "fps";
         }
 
-        #endregion
+    #endregion
 
-        #region Console commands
+    #region Console commands
 
         //==== Built-in example DebugCommand handlers ====
         object CMDClose(string[] args)
@@ -1108,9 +1110,9 @@ namespace TinyTeam.Debuger
             }
         }
 
-        #endregion
+    #endregion
 
-        #region InternalFunctionality
+    #region InternalFunctionality
 
         void LogMessage(Message msg)
         {
@@ -1210,9 +1212,9 @@ namespace TinyTeam.Debuger
             EvalInputString(inputCMD);
         }
 
-        #endregion
+    #endregion
 
-        #region internal Static Api
+    #region internal Static Api
 
         internal static object Log(object message, string customType)
         {
@@ -1288,9 +1290,9 @@ namespace TinyTeam.Debuger
             }
         }
 
-        #endregion
+    #endregion
 
-        #region Event UI Process
+    #region Event UI Process
 
         private void ProcessInput(string cmd)
         {
@@ -1431,9 +1433,9 @@ namespace TinyTeam.Debuger
             return curs.Count - 1;
         }
 
-        #endregion
+    #endregion
 
-        #region Thread Writing Log
+    #region Thread Writing Log
 
         /// <summary>
         /// 日志buffer队列
@@ -1605,7 +1607,7 @@ namespace TinyTeam.Debuger
             }
         }
 
-        #endregion
+    #endregion
     }
 
     public class FPSCounter
@@ -1683,4 +1685,6 @@ namespace TinyTeam.Debuger
         }
     }
 
+
+#endif //#if UNITY_ENGINE
 }
