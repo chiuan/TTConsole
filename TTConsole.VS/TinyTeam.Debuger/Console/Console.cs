@@ -544,6 +544,14 @@
 				//check auto page move.
 				if (IsOpen)
 				{
+					// focuse the input text
+					if (Input.GetKeyUp(KeyCode.Space))
+					{
+						input.ActivateInputField();
+						input.Select();
+						return;
+					}
+
 					//keycode work
 					if (Input.GetKeyUp(KeyCode.LeftBracket))
 					{
