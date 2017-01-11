@@ -437,8 +437,8 @@
 			this.RegisterCommandCallback("fps", CMDShowFPS, "控制显示FPS，0表示不显示,1表示显示fps,2表示也显示fps&内存[Fps Conrtol]");
 			this.RegisterCommandCallback("mem", CMDShowMemory, "打印当前内存占用列表[Memory Detail Show]");
 			this.RegisterCommandCallback("log", CMDStartAsyncLoging, "开启异步写入Log文件");
-			this.RegisterCommandCallback("net", CMDShowNetMessage, "显示网络信息");
-			this.RegisterCommandCallback("tt", CMDShowLoaderMessage, "显示Loader资源管理信息");
+			this.RegisterCommandCallback("net", CMDShowNetMessage, "显示网络信息[Net]");
+			this.RegisterCommandCallback("am", CMDShowAssetManagerMessage, "显示AssetManager资源管理信息[Asset]");
 
 			///Init Others CMD.
 			if (delegateInitCMD != null) delegateInitCMD(this);
@@ -1016,12 +1016,6 @@
 			else
 			{
 				currentShowMessageCustom = args[1];
-
-				//use tt instead of ttloader
-				if (currentShowMessageCustom.Equals("tt"))
-				{
-					currentShowMessageCustom = "TTLoader";
-				}
 			}
 			return currentShowMessageCustom;
 		}
@@ -1032,9 +1026,9 @@
 			return "显示网络信息";
 		}
 
-		object CMDShowLoaderMessage(string[] args)
+		object CMDShowAssetManagerMessage(string[] args)
 		{
-			CMDShowCustomMessage(new string[] { "show", "tt" });
+			CMDShowCustomMessage(new string[] { "show", "asset" });
 			return "显示Loader资源管理信息";
 		}
 
