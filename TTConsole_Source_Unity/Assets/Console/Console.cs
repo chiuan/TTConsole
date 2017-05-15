@@ -436,10 +436,29 @@ namespace TinyTeam.Debuger {
       /// <summary>
       /// unity的消息，过滤掉一些不需要的，重复显示！
       /// 例如，设置了某些消息输出到unity，将不再重复在这里显示了。
+      /// 把unity调用的log那里过滤掉
       /// </summary>
       public void HandleUnityLog (string condition, string stackTrace, LogType type) {
+         using (StringWriter sw = new StringWriter ()) {
+            using (StringReader sr = new StringReader (stackTrace)) {
+               string str = null;
+               while ((str = sr.ReadLine ()) != null) {
+                  if (str.Contains ("UnityEngine.Debug:Log(Object)")) {
+                     continue;
+                  } else if (str.Contains ("TinyTeam.Debuger.Console:Log(Object, String)")) {
+                     continue;
+                  } else if (str.Contains ("TinyTeam.Debuger.TTDebuger:Log(Object, String)")) {
+                     continue;
+                  } else {
+                     sw.WriteLine (str);
+                  }
+               }
+            }
+
+            stackTrace = sw.ToString();
+         }
+
          LogMessage (Message.Unity (condition + "\n" + "<i>" + "<color=#" + ColorToHex (Color.grey) + ">" + stackTrace + "</color>" + "</i>"));
-         //Log(condition + "\n" + "<i>"+ "<color=#"+ ColorToHex(Color.grey)+">" +stackTrace + "</color>" +"</i>", MessageType.UNITY);
       }
 
       ///check KeyCode & Touch
