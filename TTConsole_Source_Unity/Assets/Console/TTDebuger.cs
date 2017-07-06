@@ -27,7 +27,7 @@
             if (EnableLog)
             {
 #if UNITY_ENGINE
-                Console.Log(message,customType);
+                Console.Log(message, customType);
 #else
                 System.Console.WriteLine("Log>" + customType + " : " + message);
 #endif
@@ -56,7 +56,7 @@
             if (EnableLog)
             {
 #if UNITY_ENGINE
-            Console.LogError(message, customType);
+                Console.LogError(message, customType);
 #else
             System.Console.WriteLine("LogError>" + customType + " : " + message);
 #endif
@@ -78,7 +78,7 @@
             }
         }
 
-        public static void RegisterCommand(string commandString, Func<string[],object> commandCallback, string CMD_Discribes)
+        public static void RegisterCommand(string commandString, Func<string[], object> commandCallback, string CMD_Discribes)
         {
             if (EnableLog)
             {
@@ -94,6 +94,26 @@
             {
 #if UNITY_ENGINE
                 Console.UnRegisterCommand(commandString);
+#endif
+            }
+        }
+
+        public static void RegisterButton(string btnName, string cmd)
+        {
+            if (EnableLog)
+            {
+#if UNITY_ENGINE
+                Console.RegisterButton(btnName, cmd);
+#endif
+            }
+        }
+
+        public static void UnRegisterButton(string btnName)
+        {
+            if (EnableLog)
+            {
+#if UNITY_ENGINE
+                Console.UnRegisterButton(btnName);
 #endif
             }
         }
