@@ -19,6 +19,8 @@ public class NewBehaviourScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Application.runInBackground = true;
+
         TTDebuger.EnableLog = true;
 
         TTDebuger.Log("Hello Chiuan");

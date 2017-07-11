@@ -118,5 +118,14 @@
             }
         }
 
+        public static void ProcessCmd(string cmd)
+        {
+            if (EnableLog)
+            {
+#if UNITY_ENGINE
+                Console.Instance.ProcessCmd(cmd);
+#endif
+            }
+        }
     }
 }
