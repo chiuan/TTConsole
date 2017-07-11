@@ -18,6 +18,9 @@ namespace TinyTeam.Debuger
     using UnityEngine.Profiling;
     using UnityEngine.SceneManagement;
     using UnityEngine;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Threading;
 
     public class Console : MonoBehaviour
     {
@@ -448,6 +451,7 @@ namespace TinyTeam.Debuger
             this.RegisterCommandCallback("net", CMDShowNetMessage, "显示网络信息 消息类型=[Net]");
             this.RegisterCommandCallback("am", CMDShowAssetManagerMessage, "显示AssetManager资源管理信息 消息类型=[Asset]");
             this.RegisterCommandCallback("2u", CMDSetOutputToUnityMsgType, "设置某些消息类型输出到Unity的Console,如果输入消息空则清空所有消息设置");
+            this.RegisterCommandCallback("remote", CMDOpenRemoteConsole, "打开远程控制台，参数port，默认8888");
 
             ///Init Others CMD.
             if (delegateInitCMD != null) delegateInitCMD(this);
@@ -660,6 +664,13 @@ namespace TinyTeam.Debuger
                         text_fps.text = fps.current.ToString("F0");
                     }
                 }
+            }
+
+            lock (remoteCmds)
+            {
+                foreach (string cmd in remoteCmds)
+                    ProcessCmd(cmd);
+                remoteCmds.Clear();
             }
 
             if (!IsOpen) return;
@@ -1128,6 +1139,77 @@ namespace TinyTeam.Debuger
             return "显示Loader资源管理信息";
         }
 
+        void LoopThread(Func<bool> loop)
+        {
+            Thread t = new Thread(() =>
+            {
+                try { while (loop()) { } }
+                catch { }
+            });
+            t.IsBackground = true;
+            t.Start();
+        }
+
+
+        List<string> remoteCmds = new List<string>();
+        object CMDOpenRemoteConsole(string[] args)
+        {
+            int port;
+            if (args.Length < 2 || !int.TryParse(args[1], out port))
+                port = 8888;
+
+            TcpListener listener = new TcpListener(IPAddress.Any, port);
+            listener.Start();
+            LoopThread(() =>
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                var br = new BinaryReader(client.GetStream());
+                var bw = new BinaryWriter(client.GetStream());
+
+                int wangStart = -1;
+                int sendStart = -2;
+                int sendEnd = -1;
+                RegisterCommand("rlmore", rlargs =>
+                {
+                    int count;
+                    if (rlargs.Length < 2 || int.TryParse(rlargs[1], out count)) return "params error";
+                    wangStart -= count;
+                    if (wangStart < 0) wangStart = 0;
+                    return "rl from " + wangStart;
+                }, "获取更多日志,再向前获取X条日志 [rlmore X]");
+
+                string curType = string.Empty;
+                LoopThread(() =>
+                {
+                    string cmd = br.ReadString();
+                    if (!string.IsNullOrEmpty(cmd))
+                        lock (remoteCmds)
+                            remoteCmds.Add(cmd);
+                    return client.Connected;
+                });
+                LoopThread(() =>
+                {
+                    Message[] msgs = GetAllCurrentTypeMessages().ToArray();
+                    if (curType != currentShowMessageCustom || sendStart < -1)
+                    {
+                        curType = currentShowMessageCustom;
+                        bw.Write("R");
+                        sendEnd = wangStart = sendStart = Math.Max(0, msgs.Length - 20);
+                    }
+                    for (; sendEnd < msgs.Length; sendEnd++)
+                        bw.Write("E" + msgs[sendEnd].ToGUIString());
+                    for (; wangStart < sendStart; sendStart--)
+                        bw.Write("S" + msgs[sendStart - 1].ToGUIString());
+                    bw.Write(string.Empty);
+                    Thread.Sleep(TimeSpan.FromSeconds(0.1));
+                    return client.Connected;
+                });
+                listener.Stop();
+                return false;
+            });
+            return "remote console listen on " + port;
+        }
+
         object CMDSetOutputToUnityMsgType(string[] args)
         {
             string ret = "";
@@ -1487,7 +1569,7 @@ namespace TinyTeam.Debuger
 
         #region Event UI Process
 
-        private void ProcessCmd(string cmd)
+        public void ProcessCmd(string cmd)
         {
             EvalInputString(cmd);
 
