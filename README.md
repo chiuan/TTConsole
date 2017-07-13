@@ -42,3 +42,25 @@ The default startup shortcut key is ~ key. and mobile should three fingers touch
 
 	Provide View the old log file,you can open a log file quickly here:   
 	Note:all log file under your project folder/Log   
+
+### 2.4、Debug Buttons
+
+	Provide buttons for quick execute cmd
+	1、AddButton : TTDebuger.RegisterButton(string btnName, string cmd)
+	2、RemoveButton : TTDebuger.UnRegisterButton(string btnName)
+	3、the buttons will show like this
+
+![image](https://github.com/chiuan/TTConsole/blob/master/remote1.jpg)
+
+	4、click the button, just like type the "cmd"
+
+### 2.5、Remote Console
+
+	Remote console make easy to type cmd to mobiles
+	1、open remote, use cmd "remote [port]", or api "TTDebuger.ProcessCmd('remote')"
+	2、open remote console application，"TTConsole_Remote_Unity.exe"
+	3、type cmd on remote console just like on the phone
+	Note:Socket does not close well on pc
+
+![image](https://github.com/chiuan/TTConsole/blob/master/remote1.jpg)
+![image](https://github.com/chiuan/TTConsole/blob/master/remote2.jpg)
