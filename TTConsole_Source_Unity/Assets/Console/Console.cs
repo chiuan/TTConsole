@@ -1172,7 +1172,7 @@ namespace TinyTeam.Debuger
                 RegisterCommand("rlmore", rlargs =>
                 {
                     int count;
-                    if (rlargs.Length < 2 || int.TryParse(rlargs[1], out count)) return "params error";
+                    if (rlargs.Length < 2 || !int.TryParse(rlargs[1], out count)) return "params error";
                     wangStart -= count;
                     if (wangStart < 0) wangStart = 0;
                     return "rl from " + wangStart;
