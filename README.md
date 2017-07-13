@@ -50,7 +50,7 @@ The default startup shortcut key is ~ key. and mobile should three fingers touch
 	2、RemoveButton : TTDebuger.UnRegisterButton(string btnName)
 	3、the buttons will show like this
 
-![image](https://github.com/leviyuan/TTConsole/blob/master/remote1.jpg)
+![image](https://github.com/chiuan/TTConsole/blob/master/remote1.jpg)
 
 	4、click the button, just like type the "cmd"
 
