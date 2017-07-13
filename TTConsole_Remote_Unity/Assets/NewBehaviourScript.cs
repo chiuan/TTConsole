@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
@@ -6,9 +7,44 @@ using UnityEngine.UI;
 
 public class NewBehaviourScript : MonoBehaviour
 {
+    class History
+    {
+        List<string> history = new List<string>();
+        int index = 0;
+
+        public void Add(string item)
+        {
+            history.Add(item);
+            index = 0;
+            current = item;
+        }
+
+        string current = string.Empty;
+
+        public string Fetch(string cur, bool next)
+        {
+            if (index == 0) this.current = cur;
+
+            if (history.Count == 0) return current;
+
+            index += next ? -1 : 1;
+
+            if (history.Count + index < 0 || history.Count + index > history.Count - 1)
+            {
+                index = 0;
+                return this.current;
+            }
+
+            current = history[history.Count + index];
+
+            return current;
+        }
+    }
+
     public Text content;
     public InputField input;
 
+    History _history = new History();
     string _contentText = string.Empty;
     bool _contentUpdate = false;
     string contentText
@@ -24,7 +60,7 @@ public class NewBehaviourScript : MonoBehaviour
     void Start()
     {
         contentText = "Type \"host port\" to connect";
-
+        
         input.onEndEdit.AddListener(cmd =>
         {
             if (!Input.GetButtonDown("Submit"))
@@ -62,7 +98,9 @@ public class NewBehaviourScript : MonoBehaviour
                 contentText += "\nType \"host port\" to connect";
             }
 
+            _history.Add(cmd);
             input.text = string.Empty;
+            input.ActivateInputField();
         });
     }
 
@@ -76,6 +114,15 @@ public class NewBehaviourScript : MonoBehaviour
                 bw.Write(string.Empty);
         }
         catch { }
+
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            input.text = _history.Fetch(input.text, true);
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            input.text = _history.Fetch(input.text, false);
+        }
     }
 
     void receive()
