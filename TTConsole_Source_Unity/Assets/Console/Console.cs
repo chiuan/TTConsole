@@ -52,7 +52,7 @@ namespace TinyTeam.Debuger
                             //singleton.hideFlags = HideFlags.HideInHierarchy;
                             _instance.Init();
 
-                            DontDestroyOnLoad(singleton);
+                            // DontDestroyOnLoad(singleton);
                         }
                         else
                         {
@@ -737,15 +737,8 @@ namespace TinyTeam.Debuger
             canvas.sortingOrder = 88888;
 
             UnityEngine.UI.CanvasScaler cs = windows.AddComponent<UnityEngine.UI.CanvasScaler>();
-
-            //only mobile platform should use screen size.
-            if (!Application.isEditor)
-            {
-                cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                cs.screenMatchMode = UnityEngine.UI.CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-                cs.referenceResolution = new Vector2(960f, 640f);
-                cs.matchWidthOrHeight = 1.0f;
-            }
+            cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
+            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f);
 
             UnityEngine.UI.GraphicRaycaster gr = windows.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             gr.blockingObjects = UnityEngine.UI.GraphicRaycaster.BlockingObjects.All;
@@ -764,6 +757,7 @@ namespace TinyTeam.Debuger
             //background
             GameObject background = new GameObject("blackground");
             background.transform.parent = windows.transform;
+            background.transform.localScale = Vector3.one;
             UnityEngine.UI.Image img_bgm = background.AddComponent<UnityEngine.UI.Image>();
             img_bgm.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             img_bgm.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, 0);
@@ -778,6 +772,7 @@ namespace TinyTeam.Debuger
             //content_scroll_view
             GameObject scrollView = new GameObject("scrollview");
             scrollView.transform.parent = windows.transform;
+            scrollView.transform.localScale = Vector3.one;
             sr_content = scrollView.AddComponent<UnityEngine.UI.ScrollRect>();
             sr_content.horizontal = false;
 
@@ -797,6 +792,7 @@ namespace TinyTeam.Debuger
             //content_text
             GameObject scroll_content = new GameObject("content");
             scroll_content.transform.parent = scrollView.transform;
+            scroll_content.transform.localScale = Vector3.one;
             text_content = scroll_content.AddComponent<UnityEngine.UI.Text>();
             text_content.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             text_content.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, 0);
@@ -816,6 +812,7 @@ namespace TinyTeam.Debuger
         {
             GameObject input_obj = new GameObject("input");
             input_obj.transform.parent = windows.transform;
+            input_obj.transform.localScale = Vector3.one;
             UnityEngine.UI.Image img_input = input_obj.AddComponent<UnityEngine.UI.Image>();
             img_input.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             img_input.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, -15, 30);
@@ -826,6 +823,7 @@ namespace TinyTeam.Debuger
 
             GameObject input_placeholder = new GameObject("placeHolder");
             input_placeholder.transform.parent = input_obj.transform;
+            input_placeholder.transform.localScale = Vector3.one;
             UnityEngine.UI.Text text_holder = input_placeholder.AddComponent<UnityEngine.UI.Text>();
             text_holder.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             text_holder.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 5, -10);
@@ -838,6 +836,7 @@ namespace TinyTeam.Debuger
 
             GameObject input_page = new GameObject("pageamount");
             input_page.transform.parent = input_obj.transform;
+            input_page.transform.localScale = Vector3.one;
             text_pageCount = input_page.AddComponent<UnityEngine.UI.Text>();
             text_pageCount.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             text_pageCount.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 5, -10);
@@ -851,6 +850,7 @@ namespace TinyTeam.Debuger
 
             GameObject input_text_obj = new GameObject("inputText");
             input_text_obj.transform.parent = input_obj.transform;
+            input_text_obj.transform.localScale = Vector3.one;
             UnityEngine.UI.Text text_input = input_text_obj.AddComponent<UnityEngine.UI.Text>();
             text_input.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 10, -20);
             text_input.rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 5, -10);
@@ -876,6 +876,7 @@ namespace TinyTeam.Debuger
         {
             btnParent = new GameObject("btns").AddComponent<RectTransform>();
             btnParent.SetParent(windows.transform);
+            btnParent.transform.localScale = Vector3.one;
             btnParent.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, 0);
             btnParent.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0, 0);
             btnParent.anchorMin = Vector2.zero;
@@ -896,6 +897,7 @@ namespace TinyTeam.Debuger
             {
                 GameObject cmd_btn = new GameObject("btn-" + enumerator.Current.Key);
                 cmd_btn.transform.parent = btnParent.transform;
+                cmd_btn.transform.localScale = Vector3.one;
                 UnityEngine.UI.Image image = cmd_btn.AddComponent<UnityEngine.UI.Image>();
                 image.color = new Color(0, 0, 0, 1);
                 RectTransform rectTransform = cmd_btn.transform as RectTransform;
@@ -904,6 +906,7 @@ namespace TinyTeam.Debuger
                 rectTransform.anchoredPosition = new Vector2(100 * (count % rowCount), 30 * (count / rowCount));
                 GameObject text_obj = new GameObject("text");
                 text_obj.transform.parent = cmd_btn.transform;
+                text_obj.transform.localScale = Vector3.one;
                 UnityEngine.UI.Text btn_text = text_obj.AddComponent<UnityEngine.UI.Text>();
                 btn_text.text = "[" + enumerator.Current.Key + "]";
                 btn_text.rectTransform.anchorMin = btn_text.rectTransform.anchorMax = Vector2.zero;
