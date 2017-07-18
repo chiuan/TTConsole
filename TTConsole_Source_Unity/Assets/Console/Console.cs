@@ -25,8 +25,13 @@ namespace TinyTeam.Debuger
     public class Console : MonoBehaviour
     {
         private bool isInit = false;
+        private static float ScreenRawSize;
 
         #region -------------Singleton Setting------------------
+        static Console()
+        {
+            ScreenRawSize = Screen.width * Screen.height;
+        }
 
         private static Console _instance;
         private static object _lock = new object();
@@ -675,6 +680,8 @@ namespace TinyTeam.Debuger
 
             if (!IsOpen) return;
 
+            ui_root_obj.GetComponent<UnityEngine.UI.CanvasScaler>().scaleFactor =
+                Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
             if (isNeedRefreshContent)
             {
                 isNeedRefreshContent = false;
@@ -738,7 +745,7 @@ namespace TinyTeam.Debuger
 
             UnityEngine.UI.CanvasScaler cs = windows.AddComponent<UnityEngine.UI.CanvasScaler>();
             cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
-            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f);
+            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
 
             UnityEngine.UI.GraphicRaycaster gr = windows.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             gr.blockingObjects = UnityEngine.UI.GraphicRaycaster.BlockingObjects.All;
@@ -987,7 +994,9 @@ namespace TinyTeam.Debuger
             canvas.pixelPerfect = true;
             canvas.sortingOrder = 10000;
 
-            fpsRoot.AddComponent<UnityEngine.UI.CanvasScaler>();
+            UnityEngine.UI.CanvasScaler cs = fpsRoot.AddComponent<UnityEngine.UI.CanvasScaler>();
+            cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
+            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
 
             //text
             //content_text
