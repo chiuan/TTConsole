@@ -681,7 +681,7 @@ namespace TinyTeam.Debuger
             if (!IsOpen) return;
 
             ui_root_obj.GetComponent<UnityEngine.UI.CanvasScaler>().scaleFactor =
-                Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
+                Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
             if (isNeedRefreshContent)
             {
                 isNeedRefreshContent = false;
@@ -745,7 +745,7 @@ namespace TinyTeam.Debuger
 
             UnityEngine.UI.CanvasScaler cs = windows.AddComponent<UnityEngine.UI.CanvasScaler>();
             cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
-            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
+            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
 
             UnityEngine.UI.GraphicRaycaster gr = windows.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             gr.blockingObjects = UnityEngine.UI.GraphicRaycaster.BlockingObjects.All;
@@ -996,7 +996,7 @@ namespace TinyTeam.Debuger
 
             UnityEngine.UI.CanvasScaler cs = fpsRoot.AddComponent<UnityEngine.UI.CanvasScaler>();
             cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
-            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Screen.width * Screen.height / ScreenRawSize;
+            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
 
             //text
             //content_text
