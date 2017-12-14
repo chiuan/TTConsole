@@ -28,6 +28,7 @@ namespace TinyTeam.Debuger
     {
         private bool isInit = false;
         private static float ScreenRawSize;
+        static bool isEditor = false;
 
         #region -------------Singleton Setting------------------
         static Console()
@@ -52,6 +53,8 @@ namespace TinyTeam.Debuger
                     {
                         if (_instance == null)
                         {
+                            isEditor = Application.isEditor;
+
                             GameObject singleton = new GameObject();
                             _instance = singleton.AddComponent<Console>();
                             singleton.name = "(singleton) " + typeof(Console).ToString();
@@ -683,7 +686,7 @@ namespace TinyTeam.Debuger
             if (!IsOpen) return;
 
             ui_root_obj.GetComponent<UnityEngine.UI.CanvasScaler>().scaleFactor =
-                Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
+                Screen.dpi / 100f * (isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
             if (isNeedRefreshContent)
             {
                 isNeedRefreshContent = false;
@@ -747,7 +750,7 @@ namespace TinyTeam.Debuger
 
             UnityEngine.UI.CanvasScaler cs = windows.AddComponent<UnityEngine.UI.CanvasScaler>();
             cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
-            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
+            cs.scaleFactor = Screen.dpi / 100f * (isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
 
             UnityEngine.UI.GraphicRaycaster gr = windows.AddComponent<UnityEngine.UI.GraphicRaycaster>();
             gr.blockingObjects = UnityEngine.UI.GraphicRaycaster.BlockingObjects.All;
@@ -998,7 +1001,7 @@ namespace TinyTeam.Debuger
 
             UnityEngine.UI.CanvasScaler cs = fpsRoot.AddComponent<UnityEngine.UI.CanvasScaler>();
             cs.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ConstantPixelSize;
-            cs.scaleFactor = Screen.dpi / 100f * (Application.isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
+            cs.scaleFactor = Screen.dpi / 100f * (isEditor ? 1f : 0.5f) * Mathf.Pow(Screen.width * Screen.height / ScreenRawSize, 0.5f);
 
             //text
             //content_text
@@ -1476,7 +1479,7 @@ namespace TinyTeam.Debuger
                 return null;
 
             // control output to unity console first!
-            if (Application.isEditor && string.IsNullOrEmpty(customType) == false)
+            if (isEditor && string.IsNullOrEmpty(customType) == false)
             {
                 if (Console.Instance._outputToUnityMsgType.Contains(customType.ToLower()))
                 {
@@ -1496,7 +1499,7 @@ namespace TinyTeam.Debuger
                 return null;
 
             // control output to unity console first!
-            if (Application.isEditor && string.IsNullOrEmpty(customType) == false)
+            if (isEditor && string.IsNullOrEmpty(customType) == false)
             {
                 if (Console.Instance._outputToUnityMsgType.Contains(customType.ToLower()))
                 {
@@ -1526,7 +1529,7 @@ namespace TinyTeam.Debuger
                 return null;
 
             // control output to unity console first!
-            if (Application.isEditor && string.IsNullOrEmpty(customType) == false)
+            if (isEditor && string.IsNullOrEmpty(customType) == false)
             {
                 if (Console.Instance._outputToUnityMsgType.Contains(customType.ToLower()))
                 {
@@ -1546,7 +1549,7 @@ namespace TinyTeam.Debuger
                 return null;
 
             // control output to unity console first!
-            if (Application.isEditor && string.IsNullOrEmpty(customType) == false)
+            if (isEditor && string.IsNullOrEmpty(customType) == false)
             {
                 if (Console.Instance._outputToUnityMsgType.Contains(customType.ToLower()))
                 {
@@ -1786,7 +1789,7 @@ namespace TinyTeam.Debuger
             get
             {
                 string logFolder = string.Empty;
-                if (Application.isEditor)
+                if (isEditor)
                     logFolder = System.IO.Path.Combine(Application.dataPath, "../Log");
                 else
                     logFolder = System.IO.Path.Combine(Application.persistentDataPath, "Log");
