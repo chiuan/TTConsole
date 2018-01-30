@@ -1098,11 +1098,11 @@ namespace TinyTeam.Debuger
 
             Log("CurrentResolution: " + Screen.currentResolution.width + " * " + Screen.currentResolution.height, MessageType.OUTPUT);
             Log("Dpi: " + Screen.dpi, MessageType.OUTPUT);
-	#if UNITY_5_5_OR_NEWER
-			Log("Profiler.enabled = : " + UnityEngine.Profiling.Profiler.enabled.ToString(), MessageType.OUTPUT);
-	#else
+#if UNITY_5_5_OR_NEWER
+            Log("Profiler.enabled = : " + UnityEngine.Profiling.Profiler.enabled.ToString(), MessageType.OUTPUT);
+#else
 			Log("Profiler.enabled = : " + UnityEngine.Profiler.enabled.ToString(), MessageType.OUTPUT);
-	#endif
+#endif
 
             System.GC.Collect();
             Log(string.Format("Total memory: {0:###,###,###,##0} kb", (System.GC.GetTotalMemory(true)) / 1024f), MessageType.OUTPUT);
@@ -1303,25 +1303,25 @@ namespace TinyTeam.Debuger
             Log("Texture Count:" + textures.Count, MessageType.OUTPUT);
             textures.Sort((a, b) =>
             {
-	#if UNITY_5_5_OR_NEWER
-				long sa = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(a);
-				long sb = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(b);
-	#else
+#if UNITY_5_5_OR_NEWER
+                long sa = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(a);
+                long sb = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(b);
+#else
 				var sa = UnityEngine.Profiler.GetRuntimeMemorySize(a);
 				var sb = UnityEngine.Profiler.GetRuntimeMemorySize(b);
-	#endif
+#endif
                 if (sa > sb) return -1;
                 else if (sa < sb) return 1;
                 else return 0;
             });
             for (int i = 0; i < textures.Count && i < 100; i++)
             {
-	#if UNITY_5_5_OR_NEWER
-				Log(textures[i].name + " : " + (Profiler.GetRuntimeMemorySizeLong(textures[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
-	#else
+#if UNITY_5_5_OR_NEWER
+                Log(textures[i].name + " : " + (Profiler.GetRuntimeMemorySizeLong(textures[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
+#else
 				Log(textures[i].name + " : " + (Profiler.GetRuntimeMemorySize(textures[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
-	#endif
-                
+#endif
+
             }
 
             //sounds
@@ -1330,25 +1330,25 @@ namespace TinyTeam.Debuger
             Log("Sound Count:" + clips.Count, MessageType.OUTPUT);
             clips.Sort((a, b) =>
             {
-	#if UNITY_5_5_OR_NEWER
-				long sa = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(a);
-				long sb = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(b);
-	#else
+#if UNITY_5_5_OR_NEWER
+                long sa = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(a);
+                long sb = UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(b);
+#else
 				var sa = UnityEngine.Profiler.GetRuntimeMemorySize(a);
 				var sb = UnityEngine.Profiler.GetRuntimeMemorySize(b);
-	#endif
+#endif
                 if (sa > sb) return -1;
                 else if (sa < sb) return 1;
                 else return 0;
             });
             for (int i = 0; i < clips.Count; i++)
             {
-	#if UNITY_5_5_OR_NEWER
-				Log(clips[i].name + " : " + (Profiler.GetRuntimeMemorySizeLong(clips[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
-	#else
+#if UNITY_5_5_OR_NEWER
+                Log(clips[i].name + " : " + (Profiler.GetRuntimeMemorySizeLong(clips[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
+#else
 				Log(clips[i].name + " : " + (Profiler.GetRuntimeMemorySize(clips[i]) * mbseed).ToString("#0.##") + "mb", MessageType.OUTPUT);
-	#endif
-                
+#endif
+
             }
 
             return "end.";
@@ -1412,11 +1412,8 @@ namespace TinyTeam.Debuger
         {
             try
             {
-                ///wont add again.
-                if (_cmdTable.ContainsKey(commandString)) return;
-
                 _cmdTable[commandString] = commandCallback;
-                _cmdTableDiscribes.Add(commandString, CMD_Discribes);
+                _cmdTableDiscribes[commandString] = CMD_Discribes;
             }
             catch (Exception e)
             {
@@ -1990,14 +1987,14 @@ namespace TinyTeam.Debuger
             {
                 preTime = Time.realtimeSinceStartup;
             }
-	#if UNITY_5_5_OR_NEWER
-			totalReserved = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong();
-			allocated = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
-	#else
+#if UNITY_5_5_OR_NEWER
+            totalReserved = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong();
+            allocated = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
+#else
 			totalReserved = (long)UnityEngine.Profiler.GetTotalReservedMemory();
 			allocated = (long)UnityEngine.Profiler.GetTotalAllocatedMemory();
-	#endif
-            
+#endif
+
             monoMemory = GC.GetTotalMemory(false);
             return true;
         }
