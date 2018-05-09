@@ -16,7 +16,26 @@
 
     public class TTDebuger
     {
-        static public bool EnableLog = true;
+        static bool _enableLog = true;
+        static public bool EnableLog
+        {
+            get
+            {
+                return _enableLog;
+            }
+            set
+            {
+                // 确保先关掉
+                if (value == false)
+                {
+                    Console.IsOpen = false;
+                }
+
+                // 然后再设置这个状态
+                _enableLog = value;
+            }
+        }
+
         static public void Log(object message)
         {
             Log(message, null);

@@ -96,6 +96,9 @@ namespace TinyTeam.Debuger
             get { return m_isOpen; }
             set
             {
+                // if disable when init,so dont show anymore.
+                if (TTDebuger.EnableLog == false) return;
+
                 // RESET THE CURRENT SHOW TYPE WHEN OPEN AGAIN.
                 Instance.currentShowMessageCustom = string.Empty;
 
