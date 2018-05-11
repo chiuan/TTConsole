@@ -28,7 +28,9 @@
                 // 确保先关掉
                 if (value == false)
                 {
+#if UNITY_ENGINE
                     Console.IsOpen = false;
+#endif
                 }
 
                 // 然后再设置这个状态
