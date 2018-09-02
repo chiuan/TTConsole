@@ -56,7 +56,8 @@ public class NewBehaviourScript : MonoBehaviour
         GUILayout.Space(20);
         if (GUILayout.Button("logging"))
         {
-            TTDebuger.Log("socket...", "NET");
+            // TTDebuger.Log("socket...", "NET");
+            TTDebuger.EnableLog = false;
         }
     }
 
